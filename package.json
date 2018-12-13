@@ -1,0 +1,21 @@
+{
+  "name": "wikidata-highlight",
+  "version": "1.0.0",
+  "description": "Extract entities from a webpage and find them on wikidata",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "retext": "^6.0.1",
+    "retext-keywords": "^4.0.2",
+    "superagent": "^4.0.0",
+    "to-vfile": "^5.0.2",
+    "unfluff": "^3.2.0",
+    "wikidata-search": "^1.0.3"
+  }
+}
