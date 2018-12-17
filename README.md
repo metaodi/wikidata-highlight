@@ -6,3 +6,21 @@ This repo containts two parts:
 2. A user script on the browser, that adds calls the server and displays the result as highlighted text + tooltips
 
 ![Screenshot of wikidata-highlight](https://raw.githubusercontent.com/metaodi/wikidata-highlight/master/wikidata-highlight.png)
+
+
+## Usage
+
+1. Install the user script
+2. Run the NER and search components seperately (`npm run search`, `npm run ner`)
+3. Start the webserver (`npm run index`)
+4. Start browsing swissinfo.ch and wait for highlighted terms to appear to give more context
+
+
+## Deployment
+
+This application is deployed on heroku, please add the heroku remote to deploy:
+
+```
+heroku login
+heroku git:remote -a swiss-highlight
+```

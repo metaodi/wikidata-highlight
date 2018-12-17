@@ -4,11 +4,15 @@
   "description": "Extract entities from a webpage and find them on wikidata",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "index": "node index.js",
+    "ner": "node ner.js",
+    "search": "node search.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.5.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "retext": "^6.0.1",
