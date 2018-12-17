@@ -24,3 +24,5 @@ This application is deployed on heroku, please add the heroku remote to deploy:
 heroku login
 heroku git:remote -a swiss-highlight
 ```
+
+Make sure the CloudAMQP add-on is installed.

@@ -21,7 +21,8 @@ app.get('/wikidata-highlight', (req, res) => {
     var s = 'search';
     consumeDataFromQueue(s)
         .then(function(data) {
-            res.send(data);
+            console.log(data);
+            res.end(JSON.stringify(data));
         })
         .catch(function(err) {
             console.error("Error while consuming data: ", err);
