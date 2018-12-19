@@ -24,10 +24,11 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
         console.log("Modify proxy response");
         modifyResponse(res, proxyRes, function (body) {
             console.log("got body, modifying now...");
-            if (body) {
+            if (body && proxyRes.headers["content-type"] && proxyRes.headers["content-type"].indexOf("text/html") >=0) {
                 body = body.replace(/href="\//g, 'href="/swissinfo/');
-                body = body.replace(/src="\//g, 'src="/swissinfo/');
+                body = body.replace(/src="\/([^\/])/g, 'src="/swissinfo/$1');
                 body = body.replace(/https:\/\/www.swissinfo.ch\//g, '/swissinfo/');
+                body = body.replace('</body>', '<script src="/wikidata-highlight.js"></script>\n</body>');
             }
             return body; // return value can be a promise
         });
@@ -42,7 +43,7 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
    }
 });
 
-app.get("/image/*", function(req, res) {
+app.get(["/image/*", "/static/*", "/blob/*", "/blueprint/*"], function(req, res) {
     console.log("got here");
     proxy.web(req, res, {target: 'https://www.swissinfo.ch' + req.path});
 });
