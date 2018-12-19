@@ -14,8 +14,6 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
   let contentEncoding = proxyRes;
   if (proxyRes && proxyRes.headers) {
     contentEncoding = proxyRes.headers['content-encoding'];
-    // Delete the content-length if it exists. Otherwise, an exception will occur
-    // @see: https://github.com/langjt/node-http-proxy-json/issues/10
     if ('content-length' in proxyRes.headers) {
       delete proxyRes.headers['content-length'];
       //delete proxyRes.headers['content-encoding'];
@@ -44,7 +42,6 @@ module.exports = function modifyResponse(res, proxyRes, callback) {
       console.log('Unzip error: ', e);
       _end.call(res);
     });
-    console.log("Unzipping...");
     handleCompressed(res, _write, _end, unzip, zip, callback);
   } else if (!contentEncoding) {
     handleUncompressed(res, _write, _end, callback);
@@ -64,7 +61,6 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
 
   // Concat the unzip stream.
   let concatWrite = concatStream(data => {
-    console.log("Concat write");
     let body;
     body = data.toString();
 
@@ -79,19 +75,6 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
 
       _write.call(res, body);
       _end.call(res);
-
-      // // Call the response method and recover the content-encoding.
-      // zip.on('data', chunk => {
-      //     console.log("got chunk of data");
-      //     _write.call(res, chunk)
-      // });
-      // zip.on('end', () => {
-      //     console.log("end of zip");
-      //     _end.call(res)
-      // });
-
-      // zip.write(body);
-      // zip.end();
     };
 
     if (body && body.then) {
@@ -100,8 +83,6 @@ function handleCompressed(res, _write, _end, unzip, zip, callback) {
       finish(body);
     }
   });
-
-  console.log("starting to unzip");
 
   unzip.pipe(concatWrite);
 }
