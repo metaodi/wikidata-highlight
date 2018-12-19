@@ -42,7 +42,7 @@ function markTerm(term, label, content) {
     loadScript("https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js", function() {
         // get all terms
         console.log("wikihighlight");
-        var swiPath = window.location.pathname.replace('/^\/swissinfo/, '');
+        var swiPath = window.location.pathname.replace(/^\/swissinfo/, '');
         $.get( "http://swiss-highlight.herokuapp.com/wikidata-highlight", { url: 'https://www.swissinfo.ch' + swiPath } )
             .done(function( highlights ) {
                console.log(highlights);
