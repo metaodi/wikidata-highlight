@@ -42,7 +42,7 @@ function markTerm(term, label, content) {
     loadScript("https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js", function() {
         // get all terms
         console.log("wikihighlight");
-        $.get( "http://localhost:3000/wikidata-highlight", { url: window.location.href } )
+        $.get( "http://swiss-highlight.herokuapp.com/wikidata-highlight", { url: window.location.href } )
             .done(function( highlights ) {
                console.log(highlights);
                highlights.forEach(function(highlight) {
