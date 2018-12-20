@@ -3,8 +3,11 @@ var cors = require('cors')
 var httpProxy = require('http-proxy');
 var modifyResponse = require('./zip_response');
 
+var amqp = require('amqplib');
 
 const app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 app.use(cors());
 app.use(express.static('public'))
 
@@ -25,7 +28,7 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
                 body = body.replace(/href="\//g, 'href="/swissinfo/');
                 body = body.replace(/src="\/([^\/])/g, 'src="/swissinfo/$1');
                 body = body.replace(/https:\/\/www.swissinfo.ch\//g, '/swissinfo/');
-                body = body.replace('</body>', '<script src="/wikidata-highlight.js"></script>\n</body>');
+                body = body.replace('</body>', '<script src="/socket.io/socket.io.js"></script>\n<script src="/wikidata-highlight.js"></script>\n</body>');
             }
             return body; // return value can be a promise
         });
@@ -46,55 +49,39 @@ app.get("/swissinfo/*", function(req, res) {
     proxy.web(req, res, {target: 'https://www.swissinfo.ch' + swiPath});
 });
 
-const port = process.env.PORT || 3000;
-
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
-var open = require('amqplib').connect(url);
-
-app.get('/wikidata-highlight', (req, res) => {
-    if (!req.query.url) {
-        res.status(400).send({error: 'URL is required'});
-        return;
-    }
-    url = decodeURIComponent(req.query.url);
-
-    var q = 'tasks';
-    sendDataToQueue(url, q);
-
-    var s = 'search';
-    consumeDataFromQueue(s)
-        .then(function(data) {
-            console.log("Final result");
-            console.log(data);
-            res.end(JSON.stringify(data));
-        })
-        .catch(function(err) {
-            console.error("Error while consuming data: ", err);
-        });
+io.on('connection', function(socket){
+    console.log('a user connected');
+    socket.on('get_highlights', function(data) {
+        console.log("get_highlights request", data);
+        socket.join(data.url);
+        var q = 'tasks';
+        sendDataToQueue(data.url, q);
+        consumeDataFromQueue(data.url);
+     });
 });
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+const port = process.env.PORT || 3000;
+http.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
 function sendDataToQueue(data, queue) {
-    var rqConn;
-    open.then(function(conn) {
-        rqConn = conn;
-        return conn.createChannel();
-    })
-    .then(function(ch) {
-        ch.assertQueue(queue, { durable: false });
-        return ch.sendToQueue(queue, new Buffer(data));
-    })
-    .catch(function(err) {
-        console.error("Error while sending data: ", err);
-    });
+    return amqp.connect(url)
+        .then(function(conn) {
+            return conn.createChannel();
+        })
+        .then(function(ch) {
+            ch.assertQueue(queue, { durable: false });
+            return ch.sendToQueue(queue, new Buffer(data));
+        })
+        .catch(function(err) {
+            console.error("Error while sending data: ", err);
+        });
 }
 
 function consumeDataFromQueue(queue) {
-    return new Promise(function(resolve, reject) {
-        var rqConn;
-        open.then(function(conn) {
-            rqConn = conn;
+    return amqp.connect(url)
+        .then(function(conn) {
             return conn.createChannel();
         })
         .then(function(ch) {
@@ -102,10 +89,11 @@ function consumeDataFromQueue(queue) {
             ch.consume(queue, function(msg) {
               if (msg !== null) {
                 data = JSON.parse(msg.content.toString());
-                console.log(data);
-                resolve(data);
+                console.log("Sending highlights", queue, data);
+                io.to(queue).emit('highlights', data);
+              } else {
+                io.to(queue).emit('highlights', []);
               }
             }, {noAck: true});
         })
-    });
 }

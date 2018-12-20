@@ -11,17 +11,19 @@ open.then(function(conn) {
 .then(function(ch) {
     var ner = 'ner';
     ch.assertQueue(ner, { durable: false });
-    var s = 'search';
-    ch.assertQueue(s, { durable: false });
 
     ch.consume(ner, function(msg) {
       if (msg !== null) {
-        namedEntities = JSON.parse(msg.content.toString());
+        var data = JSON.parse(msg.content.toString());
+        var namedEntities = data.entities;
+        var contentUrl = data.url;
         console.log("terms", namedEntities);
+        console.log("contentUrl", contentUrl);
         searchTerms(namedEntities)
             .then(function(result) {
                 if (result !== null) {
-                    ch.sendToQueue(s, new Buffer(JSON.stringify(result)));
+                    ch.assertQueue(contentUrl, { durable: false });
+                    ch.sendToQueue(contentUrl, new Buffer(JSON.stringify(result)));
                 }
             });
       }
@@ -39,6 +41,7 @@ function searchTerms(terms) {
 			return data_value;
 		});
 		Promise.all(promises).then(function(values) {
+            console.log("got all values");
 			resolve(values);
 		});
 	});
@@ -54,6 +57,7 @@ function search(term) {
             }
             
             if (result.results.length > 0) {
+                console.log(term, result.results[0]);
                 resolve(result.results[0]);
             } else {
                 resolve(null);

@@ -36,32 +36,33 @@ function markTerm(term, label, content) {
 
 (function($) {
     'use strict';
+    console.log("wikihighlight");
+    var socket = io();
+    var swiPath = window.location.pathname.replace(/^\/swissinfo/, '');
+    var swiUrl = 'https://www.swissinfo.ch' + swiPath;
+    socket.emit('get_highlights', { url: swiUrl } );
 
     loadScript("https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js", function() {
-        // get all terms
-        console.log("wikihighlight");
-        var swiPath = window.location.pathname.replace(/^\/swissinfo/, '');
-        $.getJSON( "http://swiss-highlight.herokuapp.com/wikidata-highlight", { url: 'https://www.swissinfo.ch' + swiPath } )
-            .done(function( highlights ) {
-               console.log(highlights);
-               highlights.forEach(function(highlight) {
-                   console.log(highlight);
-                   if (highlight.data && highlight.data.description) {
-                       markTerm(highlight.term, highlight.data.label, highlight.data.description);
-                   }
-               });
-               loadScript("https://unpkg.com/popper.js/dist/umd/popper.min.js", function() {
-                   loadScript("https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js", function() {
-                       $( '[data-toggle="tooltip"]' ).each(function() {
-                           new Tooltip($(this), {
-                               placement: 'bottom',
-                               title: $(this).data('content'),
-                               trigger: 'click hover',
-                               html: true,
-                           });
-                       });
-                   });
-               });
+        socket.on('highlights', function(highlights) {
+            console.log(highlights);
+            highlights.forEach(function(highlight) {
+                console.log(highlight);
+                if (highlight.data && highlight.data.description) {
+                    markTerm(highlight.term, highlight.data.label, highlight.data.description);
+                }
+            });
+            loadScript("https://unpkg.com/popper.js/dist/umd/popper.min.js", function() {
+                loadScript("https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js", function() {
+                    $( '[data-toggle="tooltip"]' ).each(function() {
+                        new Tooltip($(this), {
+                            placement: 'bottom',
+                            title: $(this).data('content'),
+                            trigger: 'click hover',
+                            html: true,
+                        });
+                    });
+                });
+            });
         });
     });
 

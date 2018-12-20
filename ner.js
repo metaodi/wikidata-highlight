@@ -19,18 +19,19 @@ open.then(function(conn) {
 
     ch.consume(q, function(msg) {
         if (msg !== null) {
-            var url = msg.content.toString();
+            var contentUrl = msg.content.toString();
 
-            console.log("url", url);
+            console.log("url", contentUrl);
 
-            getUrlContent(url)
+            getUrlContent(contentUrl)
                 .then(function(text) {
                     console.log("Got text of URL, extracting entities...");
                     return getNamedEntities(text);
                 })
                 .then(function(entities) {
-                    console.log("entities", entities);
-                    ch.sendToQueue(ner, new Buffer(JSON.stringify(entities)));
+                    var data = {'url': contentUrl, 'entities': entities};
+                    console.log("entities data", data);
+                    ch.sendToQueue(ner, new Buffer(JSON.stringify(data)));
                 })
                 .catch(function(err) {
                     console.error("Error extracting named entities:", err);
