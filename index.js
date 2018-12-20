@@ -68,11 +68,11 @@ http.listen(port, () => console.log(`Example app listening on port ${port}!`))
 function sendDataToQueue(data, queue) {
     return amqp.connect(url)
         .then(function(conn) {
-            return conn.createChannel();
-        })
-        .then(function(ch) {
-            ch.assertQueue(queue, { durable: false });
-            return ch.sendToQueue(queue, new Buffer(data));
+            return conn.createChannel()
+                .then(function(ch) {
+                    ch.assertQueue(queue, { durable: false });
+                    ch.sendToQueue(queue, new Buffer(data));
+                });
         })
         .catch(function(err) {
             console.error("Error while sending data: ", err);
@@ -82,18 +82,19 @@ function sendDataToQueue(data, queue) {
 function consumeDataFromQueue(queue) {
     return amqp.connect(url)
         .then(function(conn) {
-            return conn.createChannel();
-        })
-        .then(function(ch) {
-            ch.assertQueue(queue, { durable: false });
-            ch.consume(queue, function(msg) {
-              if (msg !== null) {
-                data = JSON.parse(msg.content.toString());
-                console.log("Sending highlights", queue, data);
-                io.to(queue).emit('highlights', data);
-              } else {
-                io.to(queue).emit('highlights', []);
-              }
-            }, {noAck: true});
+            return conn.createChannel()
+                .then(function(ch) {
+                    ch.assertQueue(queue, { durable: false });
+                    ch.consume(queue, function(msg) {
+                      if (msg !== null) {
+                        data = JSON.parse(msg.content.toString());
+                        console.log("Sending highlights", queue, data);
+                        io.to(queue).emit('highlights', data);
+                      } else {
+                        io.to(queue).emit('highlights', []);
+                      }
+                      conn.close();
+                    }, {noAck: true});
+                });
         })
 }

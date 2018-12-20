@@ -7,37 +7,36 @@ var toString = require('nlcst-to-string')
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 var open = require('amqplib').connect(url);
 
-// Consumer
 open.then(function(conn) {
-  return conn.createChannel();
-})
-.then(function(ch) {
-    var q = 'tasks';
-    ch.assertQueue(q, { durable: false });
-    var ner = 'ner';
-    ch.assertQueue(ner, { durable: false });
+    return conn.createChannel()
+        .then(function(ch) {
+            var q = 'tasks';
+            ch.assertQueue(q, { durable: false });
+            var ner = 'ner';
+            ch.assertQueue(ner, { durable: false });
 
-    ch.consume(q, function(msg) {
-        if (msg !== null) {
-            var contentUrl = msg.content.toString();
+            ch.consume(q, function(msg) {
+                if (msg !== null) {
+                    var contentUrl = msg.content.toString();
 
-            console.log("url", contentUrl);
+                    console.log("url", contentUrl);
 
-            getUrlContent(contentUrl)
-                .then(function(text) {
-                    console.log("Got text of URL, extracting entities...");
-                    return getNamedEntities(text);
-                })
-                .then(function(entities) {
-                    var data = {'url': contentUrl, 'entities': entities};
-                    console.log("entities data", data);
-                    ch.sendToQueue(ner, new Buffer(JSON.stringify(data)));
-                })
-                .catch(function(err) {
-                    console.error("Error extracting named entities:", err);
-                });
-        }
-    }, {noAck: true});
+                    getUrlContent(contentUrl)
+                        .then(function(text) {
+                            console.log("Got text of URL, extracting entities...");
+                            return getNamedEntities(text);
+                        })
+                        .then(function(entities) {
+                            var data = {'url': contentUrl, 'entities': entities};
+                            console.log("entities data", data);
+                            ch.sendToQueue(ner, new Buffer(JSON.stringify(data)));
+                        })
+                        .catch(function(err) {
+                            console.error("Error extracting named entities:", err);
+                        });
+                }
+            }, {noAck: true});
+        });
 })
 .catch(function(err) {
     console.error("Error while handling AMQP: ", err);

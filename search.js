@@ -6,28 +6,28 @@ var open = require('amqplib').connect(url);
 
 // search
 open.then(function(conn) {
-  return conn.createChannel();
-})
-.then(function(ch) {
-    var ner = 'ner';
-    ch.assertQueue(ner, { durable: false });
+    return conn.createChannel()
+        .then(function(ch) {
+            var ner = 'ner';
+            ch.assertQueue(ner, { durable: false });
 
-    ch.consume(ner, function(msg) {
-      if (msg !== null) {
-        var data = JSON.parse(msg.content.toString());
-        var namedEntities = data.entities;
-        var contentUrl = data.url;
-        console.log("terms", namedEntities);
-        console.log("contentUrl", contentUrl);
-        searchTerms(namedEntities)
-            .then(function(result) {
-                if (result !== null) {
-                    ch.assertQueue(contentUrl, { durable: false });
-                    ch.sendToQueue(contentUrl, new Buffer(JSON.stringify(result)));
-                }
-            });
-      }
-    }, {noAck: true});
+            ch.consume(ner, function(msg) {
+              if (msg !== null) {
+                var data = JSON.parse(msg.content.toString());
+                var namedEntities = data.entities;
+                var contentUrl = data.url;
+                console.log("terms", namedEntities);
+                console.log("contentUrl", contentUrl);
+                searchTerms(namedEntities)
+                    .then(function(result) {
+                        if (result !== null) {
+                            ch.assertQueue(contentUrl, { durable: false });
+                            ch.sendToQueue(contentUrl, new Buffer(JSON.stringify(result)));
+                        }
+                    });
+              }
+            }, {noAck: true});
+        });
 })
 .catch(function(err) {
     console.error("Error while connecting to AMQP: ", err);
