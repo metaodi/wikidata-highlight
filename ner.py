@@ -41,7 +41,10 @@ def get_continuous_chunks(text):
 def get_text_from_url(url):
     r = requests.get(url)
     bs = BeautifulSoup(r.text, 'lxml')
-    return bs.find(id='mainArticle').text
+    main_article = bs.find(id='mainArticle')
+    if main_article:
+        return main_article.text
+    return ''
 
 # connect to pika
 # Access the CLODUAMQP_URL environment variable and parse it (fallback to localhost)
