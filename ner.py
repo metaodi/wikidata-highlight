@@ -69,15 +69,3 @@ channel.basic_consume(callback,
 
 print(' [*] Waiting for URL requests:')
 channel.start_consuming()
-
-
-# channel.basic_publish(exchange='',
-#                       routing_key='hello',
-#                       body='Hello CloudAMQP!')
-# 
-# print(" [x] Sent 'Hello World!'")
-# connection.close()
-
-
-
-
