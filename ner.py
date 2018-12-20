@@ -55,7 +55,6 @@ channel.queue_declare(queue='ner') # queue for named entities
 def callback(ch, method, properties, body):
     print(" [x] Received %r" % body)
     clean_text = get_text_from_url(body)
-    print(clean_text)
     r = get_continuous_chunks(clean_text)
     data = {'url': body, 'entities': r} 
     channel.basic_publish(exchange='',
