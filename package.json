@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "index": "node index.js",
-    "ner": "node ner.js",
+    "ner": "python ner.py",
     "search": "node search.js"
   },
   "author": "",

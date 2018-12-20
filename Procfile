@@ -1,3 +1,3 @@
 web: npm run index
-ner: python ner.py
+ner: npm run ner
 search: npm run search

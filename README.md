@@ -26,3 +26,12 @@ heroku git:remote -a swiss-highlight
 ```
 
 Make sure the CloudAMQP add-on is installed.
+
+### Buildpacks
+
+Since we want to use both Node.js and Python, we need to tell heroku to use two buildpacks:
+
+```
+heroku buildpacks:add --index 1 heroku/nodejs
+heroku buildpacks:add --index 2 heroku/python
+```
