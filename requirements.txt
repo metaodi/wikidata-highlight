@@ -1,0 +1,12 @@
+pandas
+bs4
+nltk
+matplotlib
+lxml
+sklearn
+seaborn
+numpy
+textblob_de
+pika
+html2text
+requests
