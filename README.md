@@ -42,3 +42,14 @@ Since we want to use both Node.js and Python, we need to tell heroku to use two 
 heroku buildpacks:add --index 1 heroku/nodejs
 heroku buildpacks:add --index 2 heroku/python
 ```
+
+### Environment variables
+
+For the local installation a `.env` file is used to set environment variables.
+Make sure to set those variables on heroku as well (using either the CLI or the dashboard).
+
+To check if they are set correctly run:
+
+```
+heroku run env --app swiss-highlight
+```
