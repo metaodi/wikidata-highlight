@@ -33,15 +33,14 @@ open.then(function(conn) {
     console.error("Error while connecting to AMQP: ", err);
 });
 
-function searchTerms(terms) {
+function searchTerms(entities) {
     return new Promise((resolve, reject) => {
-		const promises = terms.map(async term => {
-			var data = await search(term);
-			data_value = {'term': term, 'data': data};
+		const promises = entities.map(async entity => {
+			var data = await search(entity.term);
+			data_value = {'term': entity.original, 'data': data};
 			return data_value;
 		});
 		Promise.all(promises).then(function(values) {
-            console.log("got all values");
 			resolve(values);
 		});
 	});

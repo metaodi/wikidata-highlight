@@ -7,14 +7,21 @@ This repo containts two parts:
 
 ![Screenshot of wikidata-highlight](https://raw.githubusercontent.com/metaodi/wikidata-highlight/master/wikidata-highlight.png)
 
+## Installation
+
+This project uses both node and python
+
+1. Setup a new virtualenv called `pyenv` (`virtualenv --no-site-packages pyenv`)
+1. Source it `source ./pyenv/bin/activate`
+1. Install python packages `pip install -r requirements.txt`
+1. Install node packages `npm install`
+1. Copy the .env `cp .env.dist .env` and adapt the values
 
 ## Usage
 
-1. Install the user script
-2. Run the NER and search components seperately (`npm run search`, `npm run ner`)
-3. Start the webserver (`npm run index`)
-4. Start browsing swissinfo.ch and wait for highlighted terms to appear to give more context
-
+1. Run the extract, NER and search components seperately (`npm run extract`, `npm run ner`, `npm run search`)
+1. Start the webserver (`npm run index`)
+1. Start browsing swissinfo.ch and wait for highlighted terms to appear to give more context
 
 ## Deployment
 
@@ -34,4 +41,15 @@ Since we want to use both Node.js and Python, we need to tell heroku to use two 
 ```
 heroku buildpacks:add --index 1 heroku/nodejs
 heroku buildpacks:add --index 2 heroku/python
+```
+
+### Environment variables
+
+For the local installation a `.env` file is used to set environment variables.
+Make sure to set those variables on heroku as well (using either the CLI or the dashboard).
+
+To check if they are set correctly run:
+
+```
+heroku run env --app swiss-highlight
 ```

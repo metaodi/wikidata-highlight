@@ -10,3 +10,4 @@ textblob_de
 pika
 html2text
 requests
+python-dotenv
