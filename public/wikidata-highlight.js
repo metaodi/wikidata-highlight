@@ -25,7 +25,9 @@ function markTerm(term, label, content) {
     var unique = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     markInstance.mark(term, {
         className: 'mark-swissadvisor mark-swissadvisor-' + unique,
-        separateWordSearch: false
+        separateWordSearch: false,
+        caseSensitive: false,
+        accuracy: 'exactly'
     });
     var refs = document.querySelectorAll('.mark-swissadvisor-' + unique);
     refs.forEach(function(ref) {
