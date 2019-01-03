@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "index": "node index.js",
-    "ner": "python ner.py",
-    "extract": "node extract.js",
-    "search": "node search.js"
+    "ner": "if test \"$NER\" = \"js\" ; then node ner.js ; else python ner.py ; fi",
+    "extract": "if test \"$EXTRACT\" = \"python\" ; then python extract.py ; else node extract.js ; fi",
+    "search": "if test \"$SEARCH\" = \"wikipedia\" ; then node search_wikipedia.js ; else node search_wikidata.js ; fi"
   },
   "author": "",
   "license": "ISC",
@@ -19,12 +19,14 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "http-proxy": "^1.17.0",
+    "lodash": "^4.17.11",
     "retext": "^6.0.1",
     "retext-keywords": "^4.0.2",
     "socket.io": "^2.2.0",
     "superagent": "^4.0.0",
     "to-vfile": "^5.0.2",
     "unfluff": "^3.2.0",
-    "wikidata-search": "^1.0.3"
+    "wikidata-search": "^1.0.3",
+    "wikipediajs": "^1.4.0"
   }
 }

@@ -16,6 +16,7 @@ This project uses both node and python
 1. Install python packages `pip install -r requirements.txt`
 1. Install node packages `npm install`
 1. Copy the .env `cp .env.dist .env` and adapt the values
+1. Source the .env file `source .env`
 
 ## Usage
 

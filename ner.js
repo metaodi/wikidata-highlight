@@ -13,6 +13,7 @@ open.then(function(conn) {
             var ner = 'ner';
             ch.assertQueue(ner, { durable: false });
 
+            console.log("Wating for NER requests");
             ch.consume(q, function(msg) {
                 if (msg !== null) {
                     var data = JSON.parse(msg.content.toString());
