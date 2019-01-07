@@ -48,6 +48,9 @@ app.get("/swissinfo/*", function(req, res) {
     swiPath = req.path.replace(/^\/swissinfo/, '');
     proxy.web(req, res, {target: 'https://www.swissinfo.ch' + swiPath});
 });
+app.get("/", function(req, res) {
+    res.redirect('/swissinfo/eng');
+});
 
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 io.on('connection', function(socket){
