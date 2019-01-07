@@ -51,6 +51,9 @@ function searchWiki(term) {
     return wiki.search(term, "en", {'prop': 'description'})
         .then(function(res) {
             //get results in order
+            if (!res || !res.query || !res.query.pages) {
+                return null;
+            }
             var pages = _.sortBy(res.query.pages, 'index');
             var result = _.find(pages, function(p) { 
                 return p.description && p.description.indexOf('Disambiguation page') < 0;
@@ -59,4 +62,8 @@ function searchWiki(term) {
             console.log("wikipedia", term, result);
             return result;
         })
+        .catch(function(err) {
+            console.log("Error occured: " + err + ", term: " + term);
+            return null;
+        });
 }
