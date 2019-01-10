@@ -65,5 +65,9 @@ function searchIndex(term) {
                   }
                   return result;
                       
+              })
+              .catch(err => {
+                  console.error("Error occured while searching: ", err);
+                  return null;
               });
 }
