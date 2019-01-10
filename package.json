@@ -8,7 +8,7 @@
     "index": "node index.js",
     "ner": "if test \"$NER\" = \"js\" ; then node ner.js ; else python ner.py ; fi",
     "extract": "if test \"$EXTRACT\" = \"python\" ; then python extract.py ; else node extract.js ; fi",
-    "search": "if test \"$SEARCH\" = \"wikipedia\" ; then node search_wikipedia.js ; else node search_wikidata.js ; fi"
+    "search": "if test \"$SEARCH\" = \"wikipedia\" ; then node search_wikipedia.js ; elif test \"$SEARCH\" = \"index\" ; then node search_index.js ; else node search_wikidata.js ; fi"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "bufferhelper": "^0.2.1",
     "concat-stream": "^1.6.2",
     "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "http-proxy": "^1.17.0",
     "lodash": "^4.17.11",
