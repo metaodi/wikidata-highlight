@@ -52,7 +52,7 @@ function searchIndex(term) {
     var url = process.env.INDEX_URL || 'http://localhost:3000/index.json';
     return request
               .get(url)
-              .query({ q: term })
+              .query('q=' + term)
               .then(res => {
                   if (!res.ok) {
                       throw new Error("Request failed");
